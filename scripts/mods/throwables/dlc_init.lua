@@ -14,152 +14,158 @@ end
 local weapon_template_files_names = {}
 ModDLCSettings = ModDLCSettings or {}
 for dlc_name, dlc in pairs(ModDLCSettings) do
-    local package_name = dlc.package_name
+	if _dlc_name == dlc_name then
+		local package_name = dlc.package_name
 
-    if package_name then
-        Managers.package:load(package_name, "boot", nil, true)
-    end
-
-    local additional_settings = dlc.additional_settings
-
-    if additional_settings then
-        for _, settings_path in pairs(additional_settings) do
-            mod:dofile(settings_path)
-        end
-    end
-
-    local husk_lookup = dlc.husk_lookup
-
-	if husk_lookup then
-		table.append_lookup(NetworkLookup.husks, husk_lookup)
-    end
-	
-	local file_names = dlc.weapon_skins_file_names
-
-	if file_names then
-		for _, file_name in ipairs(file_names) do
-			local skin_names = mod:dofile(file_name)
-			table.append_lookup(NetworkLookup.weapon_skins, skin_names)
+		if package_name then
+			Managers.package:load(package_name, "boot", nil, true)
 		end
-    end
 
-    local file_names = dlc.item_master_list_file_names
+		local additional_settings = dlc.additional_settings
 
-	if file_names then
-		for i, file_name in ipairs(file_names) do
-			local item_names, damage_types = mod:dofile(file_name)
-			table.append_lookup(NetworkLookup.item_names, item_names)
-			table.append_lookup(NetworkLookup.damage_types, damage_types)
+		if additional_settings then
+			for _, settings_path in pairs(additional_settings) do
+				_mod:dofile(settings_path)
+			end
 		end
-    end
 
-	if dlc.weapon_template_file_names then
-		table.append(weapon_template_files_names, dlc.weapon_template_file_names)
-    end
-    
-    local default_items = dlc.default_items
+		local husk_lookup = dlc.husk_lookup
 
-	if default_items then
-		for item_name, item_data in pairs(default_items) do
-			UISettings.default_items[item_name] = item_data
+		if husk_lookup then
+			table.append_lookup(NetworkLookup.husks, husk_lookup)
 		end
-    end
-    
-	if dlc.inventory_package_list then
+
+		local damage_types = dlc.network_damage_types
+
+		if damage_types then
+			table.append(NetworkLookup.damage_types, damage_types)
+		end
 		
-		table.append_lookup(NetworkLookup.inventory_packages, dlc.inventory_package_list)
-    end
-    
-    local file_names = dlc.damage_profile_template_files_names
+		local file_names = dlc.weapon_skins_file_names
 
-	if file_names then
-		for _, file_name in ipairs(file_names) do
-			local dlc_damage_templates = mod:dofile(file_name)
-
-			for template_name, template in pairs(dlc_damage_templates) do
-				DamageProfileTemplates[template_name] = template
-				table.append_lookup(NetworkLookup.damage_profiles, {template_name})
+		if file_names then
+			for _, file_name in ipairs(file_names) do
+				local skin_names = _mod:dofile(file_name)
+				table.append_lookup(NetworkLookup.weapon_skins, skin_names)
 			end
 		end
-	end
-	
-    
-    local file_names = dlc.power_level_template_files_names
 
-	if file_names then
-		for _, file_name in ipairs(file_names) do
-			mod:dofile(file_name)
-		end
-    end
-    
-    local file_names = dlc.attack_template_files_names
+		local file_names = dlc.item_master_list_file_names
 
-	if file_names then
-		for _, file_name in ipairs(file_names) do
-			local attack_templates = mod:dofile(file_name)
-			table.append_lookup(NetworkLookup.attack_templates, attack_templates)
-			table.append_lookup(NetworkLookup.damage_sources, attack_templates)
-		end
-    end
-    
-    local projectile_gravity_settings = dlc.projectile_gravity_settings
-
-	if projectile_gravity_settings then
-		for name, value in pairs(projectile_gravity_settings) do
-			ProjectileGravitySettings[name] = value
-			table.append_lookup(NetworkLookup.projectile_gravity_settings, {name})
-		end
-    end
-    
-    local projectile_units = dlc.projectile_units
-
-	if projectile_units then
-		for name, data in pairs(projectile_units) do
-			ProjectileUnits[name] = table.clone(data)
-		end
-    end
-    
-    local projectiles = dlc.projectiles
-
-	if projectiles then
-		for name, data in pairs(projectiles) do
-			Projectiles[name] = table.clone(data)
-		end
-    end
-    
-    local spread_templates = dlc.spread_templates
-
-	if spread_templates then
-		table.merge_recursive(SpreadTemplates, spread_templates)
-    end
-    
-    local pickups = dlc.pickups
-
-	if pickups then
-		table.merge_recursive(Pickups, pickups)
-		for name, data in pairs(pickups) do
-			for name, data in pairs(data) do
-				table.append_lookup(NetworkLookup.pickup_names, {name})
+		if file_names then
+			for i, file_name in ipairs(file_names) do
+				local item_names = _mod:dofile(file_name)
+				table.append_lookup(NetworkLookup.item_names, item_names)
 			end
 		end
-	end
 
-	for group, pickups in pairs(Pickups) do
-		local total_spawn_weighting = 0
+		if dlc.weapon_template_file_names then
+			table.append(weapon_template_files_names, dlc.weapon_template_file_names)
+		end
+		
+		local default_items = dlc.default_items
 
-		for _, settings in pairs(pickups) do
-			total_spawn_weighting = total_spawn_weighting + settings.spawn_weighting
+		if default_items then
+			for item_name, item_data in pairs(default_items) do
+				UISettings.default_items[item_name] = item_data
+			end
+		end
+		
+		if dlc.inventory_package_list then
+			
+			table.append_lookup(NetworkLookup.inventory_packages, dlc.inventory_package_list)
+		end
+		
+		local file_names = dlc.damage_profile_template_files_names
+
+		if file_names then
+			for _, file_name in ipairs(file_names) do
+				local dlc_damage_templates = _mod:dofile(file_name)
+
+				for template_name, template in pairs(dlc_damage_templates) do
+					DamageProfileTemplates[template_name] = template
+					table.append_lookup(NetworkLookup.damage_profiles, {template_name})
+				end
+			end
+		end
+		
+		
+		local file_names = dlc.power_level_template_files_names
+
+		if file_names then
+			for _, file_name in ipairs(file_names) do
+				_mod:dofile(file_name)
+			end
+		end
+		
+		local file_names = dlc.attack_template_files_names
+
+		if file_names then
+			for _, file_name in ipairs(file_names) do
+				local attack_templates, damage_types = _mod:dofile(file_name)
+				table.append_lookup(NetworkLookup.attack_templates, attack_templates)
+				table.merge_recursive(NetworkLookup.damage_types, damage_types)
+			end
+		end
+		
+		local projectile_gravity_settings = dlc.projectile_gravity_settings
+
+		if projectile_gravity_settings then
+			for name, value in pairs(projectile_gravity_settings) do
+				ProjectileGravitySettings[name] = value
+				table.append_lookup(NetworkLookup.projectile_gravity_settings, {name})
+			end
+		end
+		
+		local projectile_units = dlc.projectile_units
+
+		if projectile_units then
+			for name, data in pairs(projectile_units) do
+				ProjectileUnits[name] = table.clone(data)
+			end
+		end
+		
+		local projectiles = dlc.projectiles
+
+		if projectiles then
+			for name, data in pairs(projectiles) do
+				Projectiles[name] = table.clone(data)
+			end
+		end
+		
+		local spread_templates = dlc.spread_templates
+
+		if spread_templates then
+			table.merge_recursive(SpreadTemplates, spread_templates)
+		end
+		
+		local pickups = dlc.pickups
+
+		if pickups then
+			table.merge_recursive(Pickups, pickups)
+			for name, data in pairs(pickups) do
+				for name, data in pairs(data) do
+					table.append_lookup(NetworkLookup.pickup_names, {name})
+				end
+			end
 		end
 
-		for pickup_name, settings in pairs(pickups) do
-			settings.spawn_weighting = settings.spawn_weighting / total_spawn_weighting
-			AllPickups[pickup_name] = settings
-		end
+		for group, pickups in pairs(Pickups) do
+			local total_spawn_weighting = 0
 
-		NearPickupSpawnChance[group] = NearPickupSpawnChance[group] or 0
+			for _, settings in pairs(pickups) do
+				total_spawn_weighting = total_spawn_weighting + settings.spawn_weighting
+			end
+
+			for pickup_name, settings in pairs(pickups) do
+				settings.spawn_weighting = settings.spawn_weighting / total_spawn_weighting
+				AllPickups[pickup_name] = settings
+			end
+
+			NearPickupSpawnChance[group] = NearPickupSpawnChance[group] or 0
+		end
 	end
 end
-
 
 -- Weapon Stuff
 for i = 1, #weapon_template_files_names, 1 do
@@ -296,3 +302,78 @@ for item_template_name, item_template in pairs(Weapons) do
 	end
 end
 table.append_lookup(NetworkLookup.item_template_names, item_template_table)
+
+--DamageProfileTemplates
+for name, damage_profile in pairs(DamageProfileTemplates) do
+	if not damage_profile.targets then
+		damage_profile.targets = {}
+	end
+
+	fassert(damage_profile.default_target, "damage profile [\"%s\"] missing default_target", name)
+
+	if type(damage_profile.critical_strike) == "string" then
+		local template = PowerLevelTemplates[damage_profile.critical_strike]
+
+		fassert(template, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", name, damage_profile.critical_strike)
+
+		damage_profile.critical_strike = template
+	end
+
+	if type(damage_profile.cleave_distribution) == "string" then
+		local template = PowerLevelTemplates[damage_profile.cleave_distribution]
+
+		fassert(template, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", name, damage_profile.cleave_distribution)
+
+		damage_profile.cleave_distribution = template
+	end
+
+	if type(damage_profile.armor_modifier) == "string" then
+		local template = PowerLevelTemplates[damage_profile.armor_modifier]
+
+		fassert(template, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", name, damage_profile.armor_modifier)
+
+		damage_profile.armor_modifier = template
+	end
+
+	if type(damage_profile.default_target) == "string" then
+		local template = PowerLevelTemplates[damage_profile.default_target]
+
+		fassert(template, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", name, damage_profile.default_target)
+
+		damage_profile.default_target = template
+	end
+
+	if type(damage_profile.targets) == "string" then
+		local template = PowerLevelTemplates[damage_profile.targets]
+
+		fassert(template, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", name, damage_profile.targets)
+
+		damage_profile.targets = template
+	end
+end
+
+local no_damage_templates = {}
+
+for name, damage_profile in pairs(DamageProfileTemplates) do
+	local no_damage_name = name .. "_no_damage"
+
+	if not DamageProfileTemplates[no_damage_name] then
+		local no_damage_template = table.clone(damage_profile)
+
+		if no_damage_template.targets then
+			for _, target in ipairs(no_damage_template.targets) do
+				if target.power_distribution then
+					target.power_distribution.attack = 0
+				end
+			end
+		end
+
+		if no_damage_template.default_target.power_distribution then
+			no_damage_template.default_target.power_distribution.attack = 0
+		end
+
+		no_damage_templates[no_damage_name] = no_damage_template
+	end
+end
+
+DamageProfileTemplates = table.merge(DamageProfileTemplates, no_damage_templates)

@@ -287,11 +287,11 @@ mod:hook(ProjectileScriptUnitLocomotionExtension, "update", function (func, self
 	end
 end)
 
---mod:dofile("scripts/mods/throwables/dlc_init")
+mod:dofile("scripts/mods/throwables/dlc_init")
+--dlc_init.dlc_init(mod,"throwable_spears")
 if not get_mod("AnyWeapon") then
-    mod:dofile("scripts/mods/throwables/crash_prevention")
+	mod:dofile("scripts/mods/throwables/crash_prevention")
 end
-dlc_init.dlc_init(mod,"throwable_spears")
 
 mod:hook_origin(ProjectilePhysicsUnitLocomotionExtension, "init", function (self, extension_init_context, unit, extension_init_data)
 	self.unit = unit
