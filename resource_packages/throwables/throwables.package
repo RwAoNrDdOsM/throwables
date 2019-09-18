@@ -1,0 +1,11 @@
+mod = [
+	"throwables"
+]
+
+package = [
+	"resource_packages/throwables/throwables"
+]
+
+lua = [
+	"scripts/mods/throwables/*"
+]
